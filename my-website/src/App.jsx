@@ -1,5 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import { pageThemes } from "./config/pageThemes.js";
+
 
 import Home from "./pages/Home";
 import Emulator from "./pages/Emulator";
@@ -11,34 +13,59 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 
+function PageBackground({ children }) {
+  const { pathname } = useLocation();
+
+  const path = (pathname || "/").toLowerCase().replace(/\/+$/, "") || "/";
+
+  const key =
+    path === "/" ? "home" :
+    path.startsWith("/emulator") ? "emulator" :
+    path.startsWith("/nintendo") ? "nintendo" :
+    path.startsWith("/ps2") ? "ps2" :
+    path.startsWith("/ps3") ? "ps3" :
+    path.startsWith("/psp") ? "psp" :
+    path.startsWith("/admin") ? "admin" :
+    path.startsWith("/login") || path.startsWith("/register") ? "auth" :
+    "home";
+
+  const background = pageThemes[key] || pageThemes.home;
+
+  return (
+    <div
+      className="min-h-screen bg-zinc-950 text-zinc-100 relative overflow-hidden"
+      style={{ backgroundImage: background }}
+    >
+      {/* vignette */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_55%,rgba(0,0,0,0.5))]" />
+
+      {/* top fade */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/25 to-transparent" />
+
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      {/* subtle background glow */}
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(52,211,153,0.10),transparent_45%)]" />
-
+    <PageBackground>
       <Navbar />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/emulator" element={<Emulator />} />
-          <Route path="/nintendo" element={<Nintendo />} />
-          <Route path="/ps2" element={<Ps2 />} />
-          <Route path="/ps3" element={<Ps3 />} />
-          <Route path="/psp" element={<Psp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/Emulator" element={<Emulator />} />
+          <Route path="/Nintendo" element={<Nintendo />} />
+          <Route path="/Ps2" element={<Ps2 />} />
+          <Route path="/Ps3" element={<Ps3 />} />
+          <Route path="/Psp" element={<Psp />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/Admin" element={<Admin />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
-
-      <footer className="border-t border-zinc-800/70 bg-zinc-950/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-zinc-400 sm:px-6">
-          © {new Date().getFullYear()} My Website • Built with React + Tailwind
-        </div>
-      </footer>
-    </div>
+    </PageBackground>
   );
 }
