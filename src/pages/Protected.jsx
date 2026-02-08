@@ -1,6 +1,6 @@
 // src/pages/Protected.jsx
 import { Navigate, Outlet } from "react-router-dom";
-import { isAuthed, isAdmin } from "../Services/auth";
+import { isAuthed, isAdmin } from "../Services/auth.js";
 
 export default function Protected({ adminOnly = false }) {
   if (!isAuthed()) return <Navigate to="/login" replace />;
